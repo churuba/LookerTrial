@@ -31,6 +31,10 @@
   - dimension: monthly_technology_fee
     type: number
     sql: ${TABLE}.MonthlyTechnologyFee
+    
+  - measure: technology_fee
+    type: avg
+    sql: ${monthly_technology_fee}
 
   - dimension: number_of_achpayers
     type: number
@@ -68,8 +72,8 @@
     sql: ${number_of_children_per_center}
     
 
-  - dimension: number_of_credit_card_payers
-    type: number
+  - measure: number_of_credit_card_payers
+    type: sum
     sql: ${TABLE}.NumberOfCreditCardPayers
 
   - dimension: oukey
