@@ -15,8 +15,8 @@
     sql: ${TABLE}.Offset
 
   - dimension: state
-    type: string
     sql: ${TABLE}.State
+    map_layer: us_states
 
   - dimension: time_zone
     type: string
@@ -29,4 +29,9 @@
   - measure: count
     type: count
     drill_fields: [name]
+  
+  sets:
+    export_set:
+      - name
+      - state
 
