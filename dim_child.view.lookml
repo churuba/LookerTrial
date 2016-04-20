@@ -13,6 +13,7 @@
     sql: ${TABLE}.BirthDate
 
   - dimension: child_key
+    primary_key: true
     type: number
     sql: ${TABLE}.ChildKey
 

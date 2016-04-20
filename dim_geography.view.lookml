@@ -30,3 +30,9 @@
     type: string
     sql: ${TABLE}.UTC
 
+  sets:
+    export_set:
+      - name
+      - state
+
+
