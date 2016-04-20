@@ -1,136 +1,124 @@
 - view: fact_mrr
   sql_table_name: FactMRR
-  label: "Monthly Recurring Revenue"
   fields:
 
   - dimension: _audit_key
-    hidden: true
     type: number
     sql: ${TABLE}._AuditKey
 
   - dimension: date_key
-    hidden: true
     type: number
     sql: ${TABLE}.DateKey
 
   - dimension: fact_id
-    hidden: true
     type: number
     sql: ${TABLE}.FactID
 
-  - dimension: oukey
-    hidden: true
-    type: number
-    sql: ${TABLE}.OUKey
+  - dimension_group: full
+    type: time
+    timeframes: [date, week, month]
+    convert_tz: false
+    sql: ${TABLE}.FullDate
 
-  - dimension: snapshot_date_key
-    hidden: true
+  - dimension: merchant_fee_percent
     type: number
-    sql: ${TABLE}.SnapshotDateKey
-  
+    sql: ${TABLE}.MerchantFeePercent
+
   - dimension: monthly_children_tuition_fee
-    hidden: true
     type: number
     sql: ${TABLE}.TuitionAmount
 
   - dimension: monthly_technology_fee
-    hidden: true
     type: number
     sql: ${TABLE}.MonthlyTechnologyFee
 
   - dimension: number_of_achpayers
-    hidden: true
     type: number
     sql: ${TABLE}.NumberOfACHPayers
   
   - dimension: number_of_active_children
-    hidden: true
     type: number
     sql: ${TABLE}.NumberOfActiveChildren
 
   - dimension: number_of_children_per_center
-    hidden: true
     type: number
     sql: ${TABLE}.NumberOfChildrenPerCenter
 
-#### MEASURES
+  - dimension: oukey
+    type: number
+    sql: ${TABLE}.OUKey
+
+  - dimension: smart_care_merchant_fee_percent
+    type: number
+    sql: ${TABLE}.SmartCareMerchantFeePercent
+
+  - dimension_group: snapshot
+    type: time
+    timeframes: [date, week, month]
+    convert_tz: false
+    sql: ${TABLE}.SnapshotDate
+  
+  - dimension_group: current
+    type: time
+    timeframes: [date, week]
+    sql: getdate()
+  
+  - dimension: is_latest_snapshot
+    type: yesno
+    sql: ${snapshot_week} = ${current_week}
+    
+    
+
+##### MEASURES
+  - measure: count
+    type: count
+    drill_fields: detail*
 
   - measure: technology_fee
-    label: "Available Technology Fee"
-    type: sum
+    type: avg
     sql: ${monthly_technology_fee}
     value_format_name: usd
     drill_fields: detail*
   
   - measure: total_monthly_child_tuition_fee
-    label: "Monthly Children Tuition Fee"
     type: sum
     sql: ${monthly_children_tuition_fee}
     value_format_name: usd
     drill_fields: detail*
-    
+
   - measure: total_number_of_children_per_center
-    label: "Number Of Children"
     type: sum
     sql: ${number_of_children_per_center}
     drill_fields: detail*
     
   - measure: number_of_credit_card_payers
-    label: "Number Of CreditCard Payers"
     type: sum
     sql: ${TABLE}.NumberOfCreditCardPayers
     drill_fields: detail*
-  
-  - measure: number_of_ach_payers
-    label: "Number Of ACH Payers"
-    type: sum
-    sql: ${TABLE}.NumberOfACHPayers
-    drill_fields: detail*
-  
+
   - measure: total_number_of_active_children
-    label: "Number Of Checkedin Children"
     type: sum
     sql: ${number_of_active_children}
     drill_fields: detail*
-  
-  - measure: merchant_fee_percent
-    hidden: true
-    type: number
-    sql: ${TABLE}.MerchantFeePercent
-    
-  - measure: smart_care_merchant_fee_percent
-    hidden: true
-    type: number
-    sql: ${TABLE}.SmartCareMerchantFeePercent
-  
-  - measure: realized_technology_fee
-    type: sum
-    sql: ${monthly_technology_fee} * ${number_of_active_children}
-    value_format_name: usd
-  
-  - measure: projected_merchant_revenue
-    type: sum
-    sql: ${TABLE}.MerchantFeePercent * ${monthly_children_tuition_fee}
-    value_format_name: usd
-  
-  - measure: gross_mrr
-    label: "Gross MRR"
-    type: number
-    sql: ${realized_technology_fee} + ${projected_merchant_revenue}
-    value_format_name: usd
-  
-  - measure: net_mrr
-    label: "Net MRR"
-    type: number
-    sql: ${realized_technology_fee} + ${projected_merchant_revenue}
-    value_format_name: usd
 
+  - measure: total_active_children_at_the_end_of_year
+    type: sum
+    sql: ${number_of_active_children}
+    drill_fields: detail*
+    filters:
+      dim_date.calendar_month_name: 'December'
+
+  - measure: total_active_children_current
+    type: sum
+    sql: ${number_of_active_children}
+    drill_fields: detail*
+    filters:
+      dim_date.is_latest_month: 'Yes'
+  
   sets:
     detail:
-    - total_number_of_active_children
-    - technology_fee
+    - oukey
     - merchant_fee_percent
     - smart_care_merchant_fee_percent
-    - total_monthly_child_tuition_fee    
-
-
+    - total_monthly_child_tuition_fee
+    

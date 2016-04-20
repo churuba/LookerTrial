@@ -3,36 +3,34 @@
   fields:
 
   - dimension: geography_key
-    hidden: true
     type: number
     sql: ${TABLE}.GeographyKey
 
+  - dimension: name
+    type: string
+    sql: ${TABLE}.Name
+
   - dimension: offset
-    hidden: true
     type: number
     sql: ${TABLE}.Offset
 
-  - dimension: state_code
-    type: string
-    sql: ${TABLE}.StateCode
-
-  - dimension: state_name
-    type: string
-    sql: ${TABLE}.StateName
+  - dimension: state
+    sql: ${TABLE}.State
+    map_layer: us_states
 
   - dimension: time_zone
-    hidden: true
     type: string
     sql: ${TABLE}.TimeZone
 
   - dimension: utc
-    hidden: true
     type: string
     sql: ${TABLE}.UTC
 
+  - measure: count
+    type: count
+    drill_fields: [name]
+  
   sets:
     export_set:
       - name
       - state
-
-
