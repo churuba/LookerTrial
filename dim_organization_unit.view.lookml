@@ -31,6 +31,10 @@
     sql: ${TABLE}.Capacity
 
   - dimension_group: date_created
+<<<<<<< HEAD
+=======
+    label: "Creation"
+>>>>>>> branch 'dev-cristina-huruba-dcjj' of git@lkrgit_github_483792448e40ad075ca48c6414015ecdf3954cb0:churuba/LookerTrial.git
     type: time
     timeframes: [date, week, month]
     convert_tz: false
