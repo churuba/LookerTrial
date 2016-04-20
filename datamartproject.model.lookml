@@ -1,4 +1,4 @@
-- connection: smartcare_cluj
+- connection: smartcare_datamart_amazon
 
 - include: "*.view.lookml"       # include all the views
 - include: "*.dashboard.lookml"  # include all the dashboards
