@@ -11,6 +11,10 @@
     timeframes: [date, week, month]
     convert_tz: false
     sql: ${TABLE}.BillingLiveDate
+  
+  - dimension: has_been_cancelled
+    type: yesno
+    sql: ${cancel_date} IS NOT NULL
 
   - dimension_group: cancel
     type: time
@@ -75,5 +79,21 @@
 
   - measure: count
     type: count
-    drill_fields: [name]
+    drill_fields: detail*
+  
+  - measure: total_capacity
+    type: sum
+    sql: ${capacity}
+  
+  - measure: avearge_capacity
+    type: average
+    sql: ${capacity}
+    value_format_name: decimal_2
+  
+  sets:
+    detail:
+    - oukey
+    - name
+    - capacity
+    - enrollment_status
 
