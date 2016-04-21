@@ -16,7 +16,6 @@
     order_by_field: date_key
     type: string
     sql: ${TABLE}.CalendarMonthName
-    order_by_field: calendar_month_number
 
   - dimension: calendar_month_number
     type: number
