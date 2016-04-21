@@ -1,3 +1,4 @@
+##snapshot date
 - view: dim_snapshot_date
   sql_table_name: DimSnapshotDate
   fields:

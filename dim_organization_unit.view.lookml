@@ -1,8 +1,10 @@
+##organization unit
 - view: dim_organization_unit
   sql_table_name: DimOrganizationUnit
   fields:
 
   - dimension: _audit_key
+    hidden: true
     type: number
     sql: ${TABLE}._AuditKey
 
@@ -11,10 +13,6 @@
     timeframes: [date, week, month]
     convert_tz: false
     sql: ${TABLE}.BillingLiveDate
-  
-  - dimension: has_been_cancelled
-    type: yesno
-    sql: ${cancel_date} IS NOT NULL
 
   - dimension_group: cancel
     type: time
@@ -23,39 +21,46 @@
     sql: ${TABLE}.CancelDate
 
   - dimension: cancel_reason_key
+    hidden: true
     type: number
     sql: ${TABLE}.CancelReasonKey
 
   - dimension: capacity
+    hidden: true
     type: number
     sql: ${TABLE}.Capacity
 
   - dimension_group: date_created
-    label: "Creation"
+    label: "Creation Date"
     type: time
     timeframes: [date, week, month]
     convert_tz: false
     sql: ${TABLE}.DateCreated
 
   - dimension: discriminator
+    hidden: true
     type: string
     sql: ${TABLE}.Discriminator
 
   - dimension: enrollment_status
+    hidden: true
     type: number
     sql: ${TABLE}.EnrollmentStatus
 
   - dimension: geography_key
+    hidden: true
     type: number
     sql: ${TABLE}.GeographyKey
 
   - dimension_group: go_live
+    hidden: true
     type: time
     timeframes: [date, week, month]
     convert_tz: false
     sql: ${TABLE}.GoLiveDate
 
   - dimension_group: implementation
+    hidden: true
     type: time
     timeframes: [date, week, month]
     convert_tz: false
@@ -67,37 +72,28 @@
     sql: ${TABLE}.IsActive = 1
 
   - dimension: name
+    label: "Organization Name"
     type: string
     sql: ${TABLE}.Name
     html: | 
       {{ linked_value }}
       <a href="{{ value }}" target="_new"> 
       <img src="/images/qr-graph-line@2x.png" height=20 width=20></a>
+
   - dimension: oukey
+    primary_key: true
+    hidden: true
     type: number
     sql: ${TABLE}.OUKey
-    primary_key: true
 
   - dimension: ouparent_key
+    hidden: true
     type: number
     sql: ${TABLE}.OUParentKey
 
   - measure: count
+    label: "Number of OUs"
     type: count
-    drill_fields: detail*
-  
-  - measure: total_capacity
-    type: sum
-    sql: ${capacity}
-  
-  - measure: avearge_capacity
-    type: average
-    sql: ${capacity}
-    value_format_name: decimal_2
-  
-  sets:
-    detail:
-    - oukey
-    - name
-    - capacity
-    - enrollment_status
+    drill_fields: [name]
+
+

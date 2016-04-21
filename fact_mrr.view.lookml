@@ -1,4 +1,5 @@
 - view: fact_mrr
+  label: "Monthly Recurring Revenue"
   sql_table_name: FactMRR
   fields:
 
