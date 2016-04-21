@@ -48,10 +48,20 @@
     type: number
     sql: ${TABLE}.NumberOfActiveChildren
 
-  - dimension: number_of_children_per_center
+  - dimension: number_of_children
     hidden: true
     type: number
-    sql: ${TABLE}.NumberOfChildrenPerCenter
+    sql: ${TABLE}.NumberOfChildren
+    
+  - dimension: number_of_enrolled_children
+    hidden: true
+    type: number
+    sql: ${TABLE}.NumberOfEnrolledChildren
+  
+  - dimension: number_of_children_paid_with_cc
+    hidden: true
+    type: number
+    sql: ${TABLE}.NumberOfChildrenPaidWithCC    
 
 #### MEASURES
 
@@ -61,6 +71,16 @@
     sql: ${monthly_technology_fee}
     value_format_name: usd
     drill_fields: detail*
+    
+  - measure: merchant_fee_percent
+    hidden: true
+    type: number
+    sql: ${TABLE}.MerchantFeePercent
+    
+  - measure: smart_care_merchant_fee_percent
+    hidden: true
+    type: number
+    sql: ${TABLE}.SmartCareMerchantFeePercent
   
   - measure: total_monthly_child_tuition_fee
     label: "Monthly Children Tuition Fee"
@@ -69,10 +89,10 @@
     value_format_name: usd
     drill_fields: detail*
     
-  - measure: total_number_of_children_per_center
+  - measure: total_number_of_children
     label: "Number Of Children"
     type: sum
-    sql: ${number_of_children_per_center}
+    sql: ${number_of_children}
     drill_fields: detail*
     
   - measure: number_of_credit_card_payers
@@ -92,26 +112,52 @@
     type: sum
     sql: ${number_of_active_children}
     drill_fields: detail*
-  
-  - measure: merchant_fee_percent
-    hidden: true
-    type: number
-    sql: ${TABLE}.MerchantFeePercent
     
-  - measure: smart_care_merchant_fee_percent
-    hidden: true
+  - measure: total_number_of_enrolled_children
+    label: "Number Of Enrolled Children"
+    type: sum
+    sql: ${number_of_enrolled_children}
+    drill_fields: detail*
+  
+  - measure: total_number_of_children_paid_with_cc
+    label: "Number Of Children Paid With CC"
+    type: sum
+    sql: ${number_of_children_paid_with_cc}
+    drill_fields: detail*
+  
+  - measure: cc_rate
+    label: "CrediCard Rate"
     type: number
-    sql: ${TABLE}.SmartCareMerchantFeePercent
+    sql: ${total_number_of_children_paid_with_cc} / ${total_number_of_enrolled_children}
+    
+  - measure: potential_technology_fee
+    label: "Potential Technology Fee"
+    type: number
+    sql: ${number_of_enrolled_children} * ${monthly_technology_fee}
+    value_format_name: usd
   
   - measure: realized_technology_fee
+    label: "Realized Technology Fee"
     type: sum
-    sql: ${monthly_technology_fee} * ${number_of_active_children}
+    sql: ${number_of_active_children} * ${monthly_technology_fee}
     value_format_name: usd
   
-  - measure: projected_merchant_revenue
-    type: sum
+  - dimension: tuition_fee_to_merchant
+    type: number
+    hidden: true
     sql: ${TABLE}.MerchantFeePercent * ${monthly_children_tuition_fee}
+  
+  - measure: projected_merchant_revenue
+    label: "Projected Merchant Revenue"
+    type: sum
+    sql: ${tuition_fee_to_merchant}
     value_format_name: usd
+  
+  - measure: expected_cc_revenue
+    label: "Expected CreditCard Revenue"
+    type: number
+    sql: ${total_monthly_child_tuition_fee} * ${cc_rate} * ${TABLE}.MerchantFeePercent
+  
   
   - measure: gross_mrr
     label: "Gross MRR"

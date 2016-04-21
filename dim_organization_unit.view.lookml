@@ -65,10 +65,10 @@
     convert_tz: false
     sql: ${TABLE}.ImplementationDate
 
-  - dimension: is_visible
-    label: "Is Visible" 
+  - dimension: is_active
+    label: "Is Active" 
     type: yesno
-    sql: ${TABLE}.IsVisible = 1
+    sql: ${TABLE}.IsActive = 1
 
   - dimension: name
     label: "Organization Name"

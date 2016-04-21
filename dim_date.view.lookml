@@ -4,7 +4,7 @@
 
   - dimension: calendar_month_name
     label: "Month Name"
-    order_by_field: calendar_month_number
+    order_by_field: date_key
     type: string
     sql: ${TABLE}.CalendarMonthName
 
