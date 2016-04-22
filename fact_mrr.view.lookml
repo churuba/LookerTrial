@@ -61,7 +61,12 @@
   - dimension: number_of_children_paid_with_cc
     hidden: true
     type: number
-    sql: ${TABLE}.NumberOfChildrenPaidWithCC    
+    sql: ${TABLE}.NumberOfChildrenPaidWithCC  
+  
+  - dimension: number_of_children_paid_with_ach
+    hidden: true
+    type: number
+    sql: ${TABLE}.NumberOfChildrenPaidWithACH  
 
   - dimension: smart_care_merchant_fee_percent
     hidden: true
@@ -117,6 +122,12 @@
     type: sum
     sql: ${number_of_children_paid_with_cc}
     drill_fields: detail*
+  
+  - measure: total_number_of_children_paid_with_ach
+    label: "Number Of Children Paid With ACH"
+    type: sum
+    sql: ${number_of_children_paid_with_ach}
+    drill_fields: detail*
     
   - measure: number_of_credit_card_payers
     label: "Number Of CreditCard Payers"
@@ -135,18 +146,35 @@
   - measure: cc_rate
     label: "CrediCard Rate"
     type: number
-    sql: ${total_number_of_children_paid_with_cc} / ${total_number_of_enrolled_children}
+    sql: 100.00 * ${total_number_of_children_paid_with_cc} / NULLIF(${total_number_of_enrolled_children},0) 
+    value_format: '0.00\%' # Percent with 2 decimals (1.00%)
+  
+  - measure: ach_rate
+    label: "ACH Rate"
+    type: number
+    sql: 100.00 * ${total_number_of_children_paid_with_ach} / NULLIF(${total_number_of_enrolled_children},0) 
+    value_format: '0.00\%' # Percent with 2 decimals (1.00%)
+
+  - dimension: pot_tech_fee
+    hidden: true
+    type: number
+    sql: ${number_of_enrolled_children} * ${monthly_technology_fee}
+  
+  - dimension: rlz_tech_fee
+    hidden: true
+    type: number
+    sql: ${number_of_active_children} * ${monthly_technology_fee}
     
   - measure: potential_technology_fee
     label: "Potential Technology Fee"
-    type: number
-    sql: ${number_of_enrolled_children} * ${monthly_technology_fee}
+    type: sum
+    sql: ${pot_tech_fee}
     value_format_name: usd
   
   - measure: realized_technology_fee
     label: "Realized Technology Fee"
     type: sum
-    sql: ${number_of_active_children} * ${monthly_technology_fee}
+    sql: ${rlz_tech_fee}
     value_format_name: usd
   
   - dimension: tuition_fee_to_merchant
@@ -169,13 +197,14 @@
   - measure: gross_mrr
     label: "Gross MRR"
     type: number
-    sql: ${realized_technology_fee} + ${projected_merchant_revenue}
+    sql: ${pot_tech_fee} + ${projected_merchant_revenue}
     value_format_name: usd
   
   - measure: net_mrr
+    hidden: true
     label: "Net MRR"
     type: number
-    sql: ${realized_technology_fee} + ${projected_merchant_revenue}
+    sql: ${pot_tech_fee} + ${monthly_children_tuition_fee} * (${TABLE}.MerchantFeePercent - ${smart_care_merchant_fee_percent})
     value_format_name: usd
 
 #   - measure: total_active_children_at_the_end_of_year
