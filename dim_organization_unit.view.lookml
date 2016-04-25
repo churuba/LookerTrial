@@ -75,10 +75,6 @@
     label: "Organization Name"
     type: string
     sql: ${TABLE}.Name
-    html: | 
-      {{ linked_value }}
-      <a href="{{ value }}" target="_new"> 
-      <img src="/images/qr-graph-line@2x.png" height=20 width=20></a>
 
   - dimension: oukey
     primary_key: true
