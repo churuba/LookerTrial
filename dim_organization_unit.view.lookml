@@ -31,7 +31,7 @@
     sql: ${TABLE}.Capacity
 
   - dimension_group: date_created
-    label: "Creation Date"
+    label: "Creation"
     type: time
     timeframes: [date, week, month]
     convert_tz: false
