@@ -33,6 +33,10 @@
 
 - explore: fact_mrr
   label: "Revenue"
+  conditionally_filter:
+    date.calendar_month_name: 'April'
+    date.calendar_year_number: '2016'
+    unless: [date.calendar_month_name]
   joins:
     - join: date
       from: dim_date
